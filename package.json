@@ -1,0 +1,40 @@
+{
+  "name": "aws-sdk-v3-javascript-examples",
+  "version": "1.0.0",
+  "description": "Ejemplos mínimos con buenas prácticas para usar AWS SDK v3 con Node.js",
+  "main": "src/index.js",
+  "type": "module",
+  "author": "LynxPardelle",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write src/**/*.js",
+    "test": "node --test src/tests/*.test.js"
+  },
+  "keywords": [
+    "aws",
+    "sdk",
+    "javascript",
+    "node",
+    "examples",
+    "s3",
+    "dynamodb"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.478.0",
+    "@aws-sdk/client-s3": "^3.478.0",
+    "@aws-sdk/lib-dynamodb": "^3.478.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
