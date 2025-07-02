@@ -1,9 +1,9 @@
 /**
- * Utilidades comunes para manejo de errores AWS
+ * Common AWS error handling utilities
  */
 
 /**
- * Extraer información útil de errores del AWS SDK
+ * Extract useful information from AWS SDK errors
  */
 export function extractErrorInfo(error) {
   return {
@@ -16,14 +16,14 @@ export function extractErrorInfo(error) {
 }
 
 /**
- * Verificar si un error es de tipo específico
+ * Check if an error is of a specific type
  */
 export function isAwsError(error, errorCode) {
   return error.name === errorCode;
 }
 
 /**
- * Wrapper para retry automático
+ * Wrapper for automatic retry
  */
 export async function withRetry(operation, maxRetries = 3, delay = 1000) {
   let lastError;
@@ -34,15 +34,15 @@ export async function withRetry(operation, maxRetries = 3, delay = 1000) {
     } catch (error) {
       lastError = error;
 
-      // No reintentar si el error no es retryable
+      // Don't retry if the error is not retryable
       if (!error.$retryable && attempt < maxRetries) {
         break;
       }
 
       if (attempt < maxRetries) {
-        console.warn(`Intento ${attempt} falló, reintentando en ${delay}ms...`);
+        console.warn(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
-        delay *= 2; // Backoff exponencial
+        delay *= 2; // Exponential backoff
       }
     }
   }

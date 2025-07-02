@@ -2,11 +2,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { awsConfig } from '../config/aws-config.js';
 
 /**
- * Cliente S3 configurado y reutilizable
+ * Configured and reusable S3 client
  */
 export const s3Client = new S3Client({
   region: awsConfig.region,
-  // Configuraciones adicionales opcionales:
+  // Optional additional configurations:
   // maxAttempts: 3,
   // requestTimeout: 3000,
 });

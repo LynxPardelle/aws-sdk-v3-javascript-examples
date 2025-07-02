@@ -1,14 +1,14 @@
 /**
- * Ejemplos avanzados de URLs firmadas con S3
- * Casos de uso reales y patrones comunes
+ * Advanced examples of signed URLs with S3
+ * Real use cases and common patterns
  */
 
 import * as s3Service from '../services/s3-service.js';
 import { extractErrorInfo } from '../utils/error-handler.js';
 
 /**
- * Ejemplo 1: Sistema de descarga temporal para usuarios
- * Útil para permitir que usuarios descarguen archivos por tiempo limitado
+ * Example 1: Temporary download system for users
+ * Useful for allowing users to download files for a limited time
  */
 export async function createTemporaryDownloadLink(
   bucketName,
@@ -17,14 +17,14 @@ export async function createTemporaryDownloadLink(
   durationMinutes = 30
 ) {
   try {
-    const expiresIn = durationMinutes * 60; // Convertir a segundos
+    const expiresIn = durationMinutes * 60; // Convert to seconds
     const downloadUrl = await s3Service.getDownloadSignedUrl(
       bucketName,
       fileKey,
       expiresIn
     );
 
-    // Aquí podrías guardar el enlace en tu base de datos con información del usuario
+    // Here you could save the link in your database with user information
     const linkInfo = {
       user: userEmail,
       fileKey,
@@ -33,21 +33,21 @@ export async function createTemporaryDownloadLink(
       createdAt: new Date(),
     };
 
-    console.log(`✅ Enlace temporal creado para ${userEmail}:`);
-    console.log(`📁 Archivo: ${fileKey}`);
-    console.log(`⏰ Expira en: ${durationMinutes} minutos`);
+    console.log(`✅ Temporary link created for ${userEmail}:`);
+    console.log(`📁 File: ${fileKey}`);
+    console.log(`⏰ Expires in: ${durationMinutes} minutes`);
     console.log(`🔗 URL: ${downloadUrl}`);
 
     return linkInfo;
   } catch (error) {
-    console.error('Error creando enlace temporal:', extractErrorInfo(error));
+    console.error('Error creating temporary link:', extractErrorInfo(error));
     throw error;
   }
 }
 
 /**
- * Ejemplo 2: Upload directo desde frontend con validaciones
- * Útil para formularios de upload sin pasar por tu servidor
+ * Example 2: Direct upload from frontend with validations
+ * Useful for upload forms without going through your server
  */
 export async function createUploadLinkWithValidation(
   bucketName,
@@ -57,9 +57,9 @@ export async function createUploadLinkWithValidation(
 ) {
   try {
     const fileKey = `uploads/${Date.now()}-${fileName}`;
-    const expiresIn = 300; // 5 minutos para upload
+    const expiresIn = 300; // 5 minutes for upload
 
-    // Generar URL con restricciones
+    // Generate URL with restrictions
     const uploadUrl = await s3Service.getUploadSignedUrl(
       bucketName,
       fileKey,
@@ -83,23 +83,23 @@ export async function createUploadLinkWithValidation(
       },
     };
 
-    console.log(`✅ URL de upload generada:`);
-    console.log(`📁 Archivo: ${fileName} -> ${fileKey}`);
+    console.log(`✅ Upload URL generated:`);
+    console.log(`📁 File: ${fileName} -> ${fileKey}`);
     console.log(
-      `📏 Tamaño máximo: ${Math.round(maxSizeBytes / 1024 / 1024)}MB`
+      `📏 Max size: ${Math.round(maxSizeBytes / 1024 / 1024)}MB`
     );
-    console.log(`⏰ Válida por: ${expiresIn / 60} minutos`);
+    console.log(`⏰ Valid for: ${expiresIn / 60} minutes`);
 
     return uploadInfo;
   } catch (error) {
-    console.error('Error creando URL de upload:', extractErrorInfo(error));
+    console.error('Error creating upload URL:', extractErrorInfo(error));
     throw error;
   }
 }
 
 /**
- * Ejemplo 3: Galería de imágenes con URLs firmadas
- * Útil para mostrar imágenes privadas en una galería web
+ * Example 3: Image gallery with signed URLs
+ * Useful for displaying private images in a web gallery
  */
 export async function createImageGalleryUrls(
   bucketName,
@@ -114,14 +114,14 @@ export async function createImageGalleryUrls(
       const thumbnailKey = `thumbnails/${imageKey}`;
       const fullSizeKey = `images/${imageKey}`;
 
-      // URLs para miniaturas (duración corta)
+      // URLs for thumbnails (short duration)
       const thumbnailUrl = await s3Service.getDownloadSignedUrl(
         bucketName,
         thumbnailKey,
         thumbnailDuration
       );
 
-      // URLs para imágenes completas (duración más larga)
+      // URLs for full-size images (longer duration)
       const fullSizeUrl = await s3Service.getDownloadSignedUrl(
         bucketName,
         fullSizeKey,
@@ -140,22 +140,22 @@ export async function createImageGalleryUrls(
       };
     }
 
-    console.log(`✅ Galería de ${imageKeys.length} imágenes generada`);
-    console.log(`🖼️ Miniaturas válidas por: ${thumbnailDuration / 60} minutos`);
+    console.log(`✅ Gallery of ${imageKeys.length} images generated`);
+    console.log(`🖼️ Thumbnails valid for: ${thumbnailDuration / 60} minutes`);
     console.log(
-      `📸 Imágenes completas válidas por: ${fullSizeDuration / 60} minutos`
+      `📸 Full images valid for: ${fullSizeDuration / 60} minutes`
     );
 
     return gallery;
   } catch (error) {
-    console.error('Error creando galería:', extractErrorInfo(error));
+    console.error('Error creating gallery:', extractErrorInfo(error));
     throw error;
   }
 }
 
 /**
- * Ejemplo 4: Sistema de descarga masiva con compresión
- * Útil para permitir descarga de múltiples archivos
+ * Example 4: Bulk download system with compression
+ * Useful for allowing download of multiple files
  */
 export async function createBulkDownloadUrls(
   bucketName,
@@ -164,7 +164,7 @@ export async function createBulkDownloadUrls(
   durationHours = 2
 ) {
   try {
-    const expiresIn = durationHours * 3600; // Convertir a segundos
+    const expiresIn = durationHours * 3600; // Convert to seconds
     const bulkDownload = {
       groupName,
       createdAt: new Date(),
@@ -172,11 +172,11 @@ export async function createBulkDownloadUrls(
       files: {},
       summary: {
         totalFiles: fileKeys.length,
-        estimatedSize: 'Calculando...',
+        estimatedSize: 'Calculating...',
       },
     };
 
-    // Generar URLs en paralelo para mejor rendimiento
+    // Generate URLs in parallel for better performance
     const urlPromises = fileKeys.map(async (fileKey) => {
       const downloadUrl = await s3Service.getDownloadSignedUrl(
         bucketName,
@@ -191,24 +191,24 @@ export async function createBulkDownloadUrls(
     results.forEach(({ fileKey, downloadUrl }) => {
       bulkDownload.files[fileKey] = {
         downloadUrl,
-        fileName: fileKey.split('/').pop(), // Extraer nombre del archivo
+        fileName: fileKey.split('/').pop(), // Extract file name
       };
     });
 
-    console.log(`✅ Descarga masiva preparada: ${groupName}`);
-    console.log(`📦 ${fileKeys.length} archivos incluidos`);
-    console.log(`⏰ URLs válidas por: ${durationHours} horas`);
+    console.log(`✅ Bulk download prepared: ${groupName}`);
+    console.log(`📦 ${fileKeys.length} files included`);
+    console.log(`⏰ URLs valid for: ${durationHours} hours`);
 
     return bulkDownload;
   } catch (error) {
-    console.error('Error creando descarga masiva:', extractErrorInfo(error));
+    console.error('Error creating bulk download:', extractErrorInfo(error));
     throw error;
   }
 }
 
 /**
- * Ejemplo 5: Integración con API externa
- * Útil para compartir archivos con servicios de terceros
+ * Example 5: External API integration
+ * Useful for sharing files with third-party services
  */
 export async function createAPIIntegrationUrl(
   bucketName,
@@ -217,7 +217,7 @@ export async function createAPIIntegrationUrl(
   webhookUrl = null
 ) {
   try {
-    const expiresIn = 1800; // 30 minutos para APIs
+    const expiresIn = 1800; // 30 minutes for APIs
     const downloadUrl = await s3Service.getDownloadSignedUrl(
       bucketName,
       fileKey,
@@ -237,68 +237,68 @@ export async function createAPIIntegrationUrl(
       },
     };
 
-    console.log(`✅ URL de integración generada para: ${apiName}`);
-    console.log(`📁 Archivo: ${fileKey}`);
-    console.log(`⏰ Válida por: 30 minutos`);
+    console.log(`✅ Integration URL generated for: ${apiName}`);
+    console.log(`📁 File: ${fileKey}`);
+    console.log(`⏰ Valid for: 30 minutes`);
 
     if (webhookUrl) {
-      console.log(`🔔 Webhook configurado: ${webhookUrl}`);
+      console.log(`🔔 Webhook configured: ${webhookUrl}`);
     }
 
     return integration;
   } catch (error) {
-    console.error('Error creando URL de integración:', extractErrorInfo(error));
+    console.error('Error creating integration URL:', extractErrorInfo(error));
     throw error;
   }
 }
 
 /**
- * Función de demostración que ejecuta todos los ejemplos
+ * Demonstration function that runs all examples
  */
 export async function demonstrateAdvancedSignedUrls() {
   const bucketName = process.env.S3_BUCKET_NAME;
 
   if (!bucketName) {
-    console.log('⚠️ S3_BUCKET_NAME no configurado para ejemplos avanzados');
+    console.log('⚠️ S3_BUCKET_NAME not configured for advanced examples');
     return;
   }
 
-  console.log('\n🚀 Demostrando casos de uso avanzados de URLs firmadas:\n');
+  console.log('\n🚀 Demonstrating advanced signed URL use cases:\n');
 
   try {
-    // Subir archivos de ejemplo
+    // Upload example files
     await s3Service.uploadObject(
       bucketName,
       'documents/report.pdf',
-      'Contenido del reporte',
+      'Report content',
       'application/pdf'
     );
     await s3Service.uploadObject(
       bucketName,
       'images/photo1.jpg',
-      'Datos de imagen 1',
+      'Image data 1',
       'image/jpeg'
     );
     await s3Service.uploadObject(
       bucketName,
       'images/photo2.jpg',
-      'Datos de imagen 2',
+      'Image data 2',
       'image/jpeg'
     );
 
-    // Ejemplo 1: Enlace temporal
-    console.log('1️⃣ Enlace temporal para usuario:');
+    // Example 1: Temporary link
+    console.log('1️⃣ Temporary link for user:');
     await createTemporaryDownloadLink(
       bucketName,
       'documents/report.pdf',
-      'usuario@ejemplo.com',
+      'user@example.com',
       15
     );
 
     console.log('\n' + '─'.repeat(50) + '\n');
 
-    // Ejemplo 2: Upload directo
-    console.log('2️⃣ URL de upload directo:');
+    // Example 2: Direct upload
+    console.log('2️⃣ Direct upload URL:');
     await createUploadLinkWithValidation(
       bucketName,
       'nuevo-documento.pdf',
@@ -308,8 +308,8 @@ export async function demonstrateAdvancedSignedUrls() {
 
     console.log('\n' + '─'.repeat(50) + '\n');
 
-    // Ejemplo 3: Galería de imágenes
-    console.log('3️⃣ Galería de imágenes:');
+    // Example 3: Image gallery
+    console.log('3️⃣ Image gallery:');
     await createImageGalleryUrls(
       bucketName,
       ['photo1.jpg', 'photo2.jpg'],
@@ -319,8 +319,8 @@ export async function demonstrateAdvancedSignedUrls() {
 
     console.log('\n' + '─'.repeat(50) + '\n');
 
-    // Ejemplo 4: Descarga masiva
-    console.log('4️⃣ Descarga masiva:');
+    // Example 4: Bulk download
+    console.log('4️⃣ Bulk download:');
     await createBulkDownloadUrls(
       bucketName,
       ['documents/report.pdf', 'images/photo1.jpg', 'images/photo2.jpg'],
@@ -330,22 +330,22 @@ export async function demonstrateAdvancedSignedUrls() {
 
     console.log('\n' + '─'.repeat(50) + '\n');
 
-    // Ejemplo 5: Integración API
-    console.log('5️⃣ Integración con API externa:');
+    // Example 5: API integration
+    console.log('5️⃣ External API integration:');
     await createAPIIntegrationUrl(
       bucketName,
       'documents/report.pdf',
       'ProcessingAPI',
-      'https://api.ejemplo.com/webhook'
+      'https://api.example.com/webhook'
     );
 
-    // Limpiar archivos de ejemplo
-    console.log('\n🧹 Limpiando archivos de ejemplo...');
+    // Clean up example files
+    console.log('\n🧹 Cleaning up example files...');
     await s3Service.deleteObject(bucketName, 'documents/report.pdf');
     await s3Service.deleteObject(bucketName, 'images/photo1.jpg');
     await s3Service.deleteObject(bucketName, 'images/photo2.jpg');
-    console.log('✅ Limpieza completada');
+    console.log('✅ Cleanup completed');
   } catch (error) {
-    console.error('Error en ejemplos avanzados:', extractErrorInfo(error));
+    console.error('Error in advanced examples:', extractErrorInfo(error));
   }
 }

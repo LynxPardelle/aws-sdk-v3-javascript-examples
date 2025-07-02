@@ -1,16 +1,16 @@
 import 'dotenv/config';
 
 /**
- * Configuración centralizada para AWS SDK
+ * Centralized configuration for AWS SDK
  */
 export const awsConfig = {
   region: process.env.AWS_REGION || 'us-east-1',
-  // El SDK automáticamente usará AWS_ACCESS_KEY_ID y AWS_SECRET_ACCESS_KEY del entorno
-  // o el perfil configurado en AWS_PROFILE
+  // The SDK will automatically use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment
+  // or the profile configured in AWS_PROFILE
 };
 
 /**
- * Configuración específica del proyecto
+ * Project-specific configuration
  */
 export const projectConfig = {
   s3: {
@@ -22,13 +22,13 @@ export const projectConfig = {
 };
 
 /**
- * Validar que las variables de entorno requeridas estén configuradas
+ * Validate that required environment variables are configured
  */
 export function validateConfig() {
   const required = ['AWS_REGION'];
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
-    throw new Error(`Variables de entorno faltantes: ${missing.join(', ')}`);
+    throw new Error(`Missing environment variables: ${missing.join(', ')}`);
   }
 }

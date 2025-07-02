@@ -3,14 +3,14 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { awsConfig } from '../config/aws-config.js';
 
 /**
- * Cliente DynamoDB básico
+ * Basic DynamoDB client
  */
 const dynamoDBClient = new DynamoDBClient({
   region: awsConfig.region,
 });
 
 /**
- * Cliente DynamoDB Document (más fácil de usar para operaciones CRUD)
+ * DynamoDB Document client (easier to use for CRUD operations)
  */
 export const dynamoDBDocClient = DynamoDBDocumentClient.from(dynamoDBClient, {
   marshallOptions: {

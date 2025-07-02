@@ -8,7 +8,7 @@ import {
 import { dynamoDBDocClient } from '../clients/dynamodb-client.js';
 
 /**
- * Crear o actualizar un item en DynamoDB
+ * Create or update an item in DynamoDB
  */
 export async function putItem(tableName, item) {
   try {
@@ -19,13 +19,13 @@ export async function putItem(tableName, item) {
     const response = await dynamoDBDocClient.send(command);
     return response;
   } catch (error) {
-    console.error('Error guardando item:', error);
+    console.error('Error saving item:', error);
     throw error;
   }
 }
 
 /**
- * Obtener un item por su clave primaria
+ * Get an item by its primary key
  */
 export async function getItem(tableName, key) {
   try {
@@ -36,13 +36,13 @@ export async function getItem(tableName, key) {
     const response = await dynamoDBDocClient.send(command);
     return response.Item;
   } catch (error) {
-    console.error('Error obteniendo item:', error);
+    console.error('Error getting item:', error);
     throw error;
   }
 }
 
 /**
- * Eliminar un item por su clave primaria
+ * Delete an item by its primary key
  */
 export async function deleteItem(tableName, key) {
   try {
@@ -53,13 +53,13 @@ export async function deleteItem(tableName, key) {
     const response = await dynamoDBDocClient.send(command);
     return response;
   } catch (error) {
-    console.error('Error eliminando item:', error);
+    console.error('Error deleting item:', error);
     throw error;
   }
 }
 
 /**
- * Escanear toda la tabla (usar con cuidado en tablas grandes)
+ * Scan entire table (use with caution on large tables)
  */
 export async function scanTable(tableName, limit = 25) {
   try {
@@ -74,13 +74,13 @@ export async function scanTable(tableName, limit = 25) {
       lastEvaluatedKey: response.LastEvaluatedKey,
     };
   } catch (error) {
-    console.error('Error escaneando tabla:', error);
+    console.error('Error scanning table:', error);
     throw error;
   }
 }
 
 /**
- * Consultar items usando un índice
+ * Query items using an index
  */
 export async function queryItems(
   tableName,
@@ -100,7 +100,7 @@ export async function queryItems(
       lastEvaluatedKey: response.LastEvaluatedKey,
     };
   } catch (error) {
-    console.error('Error consultando items:', error);
+    console.error('Error querying items:', error);
     throw error;
   }
 }

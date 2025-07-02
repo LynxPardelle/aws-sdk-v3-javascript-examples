@@ -1,128 +1,128 @@
 # AWS SDK v3 JavaScript Examples
 
-Un proyecto mínimo con buenas prácticas para usar el AWS SDK v3 con Node.js.
+A minimal project with best practices for using AWS SDK v3 with Node.js.
 
-## 🚀 Características
+## 🚀 Features
 
-- ✅ **Configuración modular** con variables de entorno
-- ✅ **Clientes reutilizables** para S3 y DynamoDB
-- ✅ **Manejo de errores** robusto con retry automático
-- ✅ **Estructura organizada** por servicios
-- ✅ **ESLint y Prettier** configurados
-- ✅ **Tests básicos** incluidos
-- ✅ **ESM (ES Modules)** soporte nativo
+- ✅ **Modular configuration** with environment variables
+- ✅ **Reusable clients** for S3 and DynamoDB
+- ✅ **Robust error handling** with automatic retry
+- ✅ **Organized structure** by services
+- ✅ **ESLint and Prettier** configured
+- ✅ **Basic tests** included
+- ✅ **ESM (ES Modules)** native support
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 src/
 ├── config/
-│   └── aws-config.js       # Configuración centralizada de AWS
+│   └── aws-config.js       # Centralized AWS configuration
 ├── clients/
-│   ├── s3-client.js        # Cliente S3 configurado
-│   └── dynamodb-client.js  # Cliente DynamoDB configurado
+│   ├── s3-client.js        # Configured S3 client
+│   └── dynamodb-client.js  # Configured DynamoDB client
 ├── services/
-│   ├── s3-service.js       # Operaciones S3
-│   └── dynamodb-service.js # Operaciones DynamoDB
+│   ├── s3-service.js       # S3 operations
+│   └── dynamodb-service.js # DynamoDB operations
 ├── utils/
-│   └── error-handler.js    # Utilidades para manejo de errores
+│   └── error-handler.js    # Error handling utilities
 ├── tests/
-│   ├── config.test.js      # Tests de configuración
-│   └── error-handler.test.js # Tests de error handler
-└── index.js                # Punto de entrada principal
+│   ├── config.test.js      # Configuration tests
+│   └── error-handler.test.js # Error handler tests
+└── index.js                # Main entry point
 ```
 
-## 🛠️ Instalación
+## 🛠️ Installation
 
-1. **Clona el repositorio:**
+1. **Clone the repository:**
    ```bash
-   git clone <tu-repo-url>
+   git clone <your-repo-url>
    cd aws-sdk-v3-javascript-examples
    ```
 
-2. **Instala las dependencias:**
+2. **Install dependencies:**
    ```bash
    npm install
    ```
 
-3. **Configura las variables de entorno:**
+3. **Configure environment variables:**
    ```bash
    cp .env.example .env
    ```
    
-   Edita el archivo `.env` con tus credenciales AWS:
+   Edit the `.env` file with your AWS credentials:
    ```env
    AWS_REGION=us-east-1
-   AWS_ACCESS_KEY_ID=tu-access-key-id
-   AWS_SECRET_ACCESS_KEY=tu-secret-access-key
+   AWS_ACCESS_KEY_ID=your-access-key-id
+   AWS_SECRET_ACCESS_KEY=your-secret-access-key
    
-   # Opcional: para ejemplos específicos
-   S3_BUCKET_NAME=tu-bucket-name
-   DYNAMODB_TABLE_NAME=tu-tabla-nombre
+   # Optional: for specific examples
+   S3_BUCKET_NAME=your-bucket-name
+   DYNAMODB_TABLE_NAME=your-table-name
    ```
 
-## 🔐 Configuración de AWS
+## 🔐 AWS Configuration
 
-### Opción 1: Variables de Entorno
-Configura las variables en tu archivo `.env`:
+### Option 1: Environment Variables
+Configure variables in your `.env` file:
 ```env
 AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=tu-access-key-id
-AWS_SECRET_ACCESS_KEY=tu-secret-access-key
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
 ```
 
-### Opción 2: AWS Profile
-Si tienes perfiles configurados con AWS CLI:
+### Option 2: AWS Profile
+If you have profiles configured with AWS CLI:
 ```env
-AWS_PROFILE=tu-perfil
+AWS_PROFILE=your-profile
 AWS_REGION=us-east-1
 ```
 
-### Opción 3: IAM Roles (Recomendado para producción)
-Para aplicaciones ejecutándose en EC2, Lambda, etc., el SDK automáticamente usará los roles IAM asociados.
+### Option 3: IAM Roles (Recommended for production)
+For applications running on EC2, Lambda, etc., the SDK will automatically use associated IAM roles.
 
-## 🏃‍♂️ Uso
+## 🏃‍♂️ Usage
 
-### Ejecutar la aplicación:
+### Run the application:
 ```bash
 npm start
 ```
 
-### Modo desarrollo (con watch):
+### Development mode (with watch):
 ```bash
 npm run dev
 ```
 
-### Ejecutar tests:
+### Run tests:
 ```bash
 npm test
 ```
 
-### Linting y formateo:
+### Linting and formatting:
 ```bash
-npm run lint          # Verificar código
-npm run lint:fix      # Corregir problemas automáticamente
-npm run format        # Formatear código con Prettier
+npm run lint          # Check code
+npm run lint:fix      # Fix issues automatically
+npm run format        # Format code with Prettier
 ```
 
-## 📝 Ejemplos de Uso
+## 📝 Usage Examples
 
 ### S3 Operations
 
 ```javascript
 import * as s3Service from './services/s3-service.js';
 
-// Listar buckets
+// List buckets
 const buckets = await s3Service.listBuckets();
 
-// Subir archivo
-await s3Service.uploadObject('mi-bucket', 'archivo.txt', 'contenido');
+// Upload file
+await s3Service.uploadObject('my-bucket', 'file.txt', 'content');
 
-// Descargar archivo
-const file = await s3Service.downloadObject('mi-bucket', 'archivo.txt');
+// Download file
+const file = await s3Service.downloadObject('my-bucket', 'file.txt');
 
-// Eliminar archivo
-await s3Service.deleteObject('mi-bucket', 'archivo.txt');
+// Delete file
+await s3Service.deleteObject('my-bucket', 'file.txt');
 ```
 
 ### DynamoDB Operations
@@ -130,75 +130,75 @@ await s3Service.deleteObject('mi-bucket', 'archivo.txt');
 ```javascript
 import * as dynamoService from './services/dynamodb-service.js';
 
-// Crear/actualizar item
-await dynamoService.putItem('mi-tabla', {
+// Create/update item
+await dynamoService.putItem('my-table', {
   id: '123',
-  name: 'Juan',
-  email: 'juan@ejemplo.com'
+  name: 'John',
+  email: 'john@example.com'
 });
 
-// Obtener item
-const item = await dynamoService.getItem('mi-tabla', { id: '123' });
+// Get item
+const item = await dynamoService.getItem('my-table', { id: '123' });
 
-// Eliminar item
-await dynamoService.deleteItem('mi-tabla', { id: '123' });
+// Delete item
+await dynamoService.deleteItem('my-table', { id: '123' });
 
-// Escanear tabla
-const result = await dynamoService.scanTable('mi-tabla', 10);
+// Scan table
+const result = await dynamoService.scanTable('my-table', 10);
 ```
 
-### URLs Firmadas de S3
+### S3 Signed URLs
 
 ```javascript
 import * as s3Service from './services/s3-service.js';
 
-// Generar URL firmada para descarga (válida por 1 hora)
-const downloadUrl = await s3Service.getDownloadSignedUrl('mi-bucket', 'archivo.pdf', 3600);
+// Generate signed URL for download (valid for 1 hour)
+const downloadUrl = await s3Service.getDownloadSignedUrl('my-bucket', 'file.pdf', 3600);
 
-// Generar URL firmada para upload directo
-const uploadUrl = await s3Service.getUploadSignedUrl('mi-bucket', 'nuevo-archivo.pdf', 'application/pdf', 1800);
+// Generate signed URL for direct upload
+const uploadUrl = await s3Service.getUploadSignedUrl('my-bucket', 'new-file.pdf', 'application/pdf', 1800);
 
-// Generar múltiples URLs firmadas
-const urls = await s3Service.getMultipleDownloadSignedUrls('mi-bucket', ['file1.txt', 'file2.jpg'], 3600);
+// Generate multiple signed URLs
+const urls = await s3Service.getMultipleDownloadSignedUrls('my-bucket', ['file1.txt', 'file2.jpg'], 3600);
 
-// Usar URL de upload desde frontend
+// Use upload URL from frontend
 fetch(uploadUrl, {
   method: 'PUT',
-  body: archivoFile,
+  body: fileFile,
   headers: {
     'Content-Type': 'application/pdf'
   }
 }).then(response => {
   if (response.ok) {
-    console.log('Archivo subido exitosamente');
+    console.log('File uploaded successfully');
   }
 });
 ```
 
-## 🛡️ Manejo de Errores
+## 🛡️ Error Handling
 
-El proyecto incluye utilidades para manejo robusto de errores:
+The project includes utilities for robust error handling:
 
 ```javascript
 import { withRetry, extractErrorInfo } from './utils/error-handler.js';
 
 try {
-  // Operación con retry automático
+  // Operation with automatic retry
   const result = await withRetry(async () => {
     return await someAwsOperation();
-  }, 3, 1000); // 3 reintentos, 1s de delay inicial
+  }, 3, 1000); // 3 retries, 1s initial delay
 
 } catch (error) {
   const errorInfo = extractErrorInfo(error);
-  console.error('Error AWS:', errorInfo);
+  console.error('AWS Error:', errorInfo);
 }
 ```
 
-## 🔧 Configuración Avanzada
+## 🔧 Advanced Configuration
 
-### Timeouts y Reintentos
+### Timeouts and Retries
 
-Puedes configurar timeouts y reintentos en los clientes:
+You can configure timeouts and retries in clients:
 
 ```javascript
 import { S3Client } from '@aws-sdk/client-s3';
@@ -210,9 +210,9 @@ const s3Client = new S3Client({
 });
 ```
 
-### Configuración de DynamoDB
+### DynamoDB Configuration
 
-Para DynamoDB Document Client:
+For DynamoDB Document Client:
 
 ```javascript
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
@@ -230,40 +230,40 @@ const docClient = DynamoDBDocumentClient.from(dynamoDBClient, {
 
 ## 🧪 Testing
 
-El proyecto incluye tests básicos usando Node.js Test Runner nativo:
+The project includes basic tests using Node.js native Test Runner:
 
 ```bash
-# Ejecutar todos los tests
+# Run all tests
 npm test
 
-# Ejecutar test específico
+# Run specific test
 node --test src/tests/config.test.js
 ```
 
-## 📦 Scripts Disponibles
+## 📦 Available Scripts
 
-- `npm start` - Ejecutar la aplicación
-- `npm run dev` - Modo desarrollo con watch
-- `npm test` - Ejecutar tests
-- `npm run lint` - Verificar código con ESLint
-- `npm run lint:fix` - Corregir problemas de ESLint
-- `npm run format` - Formatear código con Prettier
+- `npm start` - Run the application
+- `npm run dev` - Development mode with watch
+- `npm test` - Run tests
+- `npm run lint` - Check code with ESLint
+- `npm run lint:fix` - Fix ESLint issues
+- `npm run format` - Format code with Prettier
 
-## 🔒 Mejores Prácticas
+## 🔒 Best Practices
 
-1. **Nunca hardcodees credenciales** en el código
-2. **Usa variables de entorno** para configuración
-3. **Implementa manejo de errores** robusto
-4. **Reutiliza clientes** AWS en lugar de crear nuevos para cada operación
-5. **Configura timeouts** apropiados
-6. **Usa retry logic** para operaciones críticas
-7. **Valida configuración** al inicio de la aplicación
+1. **Never hardcode credentials** in code
+2. **Use environment variables** for configuration
+3. **Implement robust error handling**
+4. **Reuse AWS clients** instead of creating new ones for each operation
+5. **Configure appropriate timeouts**
+6. **Use retry logic** for critical operations
+7. **Validate configuration** at application startup
 
-## 🆔 Permisos IAM Requeridos
+## 🆔 Required IAM Permissions
 
-Para que los ejemplos funcionen, tu usuario/rol AWS necesita estos permisos mínimos:
+For the examples to work, your AWS user/role needs these minimum permissions:
 
-### Para S3:
+### For S3:
 ```json
 {
   "Version": "2012-10-17",
@@ -282,7 +282,7 @@ Para que los ejemplos funcionen, tu usuario/rol AWS necesita estos permisos mín
 }
 ```
 
-### Para DynamoDB:
+### For DynamoDB:
 ```json
 {
   "Version": "2012-10-17",
@@ -296,25 +296,25 @@ Para que los ejemplos funcionen, tu usuario/rol AWS necesita estos permisos mín
         "dynamodb:Scan",
         "dynamodb:Query"
       ],
-      "Resource": "arn:aws:dynamodb:*:*:table/tu-tabla-nombre"
+      "Resource": "arn:aws:dynamodb:*:*:table/your-table-name"
     }
   ]
 }
 ```
 
-## 🤝 Contribuir
+## 🤝 Contributing
 
-1. Fork el proyecto
-2. Crea una branch para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la branch (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/new-functionality`)
+3. Commit your changes (`git commit -am 'Add new functionality'`)
+4. Push to the branch (`git push origin feature/new-functionality`)
+5. Open a Pull Request
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+This project is under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-## 🔗 Enlaces Útiles
+## 🔗 Useful Links
 
 - [AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/)
 - [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)

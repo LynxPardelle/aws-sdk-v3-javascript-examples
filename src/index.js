@@ -5,43 +5,43 @@ import { extractErrorInfo, withRetry } from './utils/error-handler.js';
 import { demonstrateAdvancedSignedUrls } from './examples/signed-urls-advanced.js';
 
 /**
- * Función principal de demostración
+ * Main demonstration function
  */
 async function main() {
   try {
-    // Validar configuración
+    // Validate configuration
     validateConfig();
-    console.log('✅ Configuración AWS validada');
+    console.log('✅ AWS configuration validated');
 
-    // Ejemplo de S3
-    console.log('\n📦 Ejemplos de S3:');
+    // S3 example
+    console.log('\n📦 S3 examples:');
     await demonstrateS3();
 
-    // Ejemplo de DynamoDB
-    console.log('\n🗄️ Ejemplos de DynamoDB:');
+    // DynamoDB example
+    console.log('\n🗄️ DynamoDB examples:');
     await demonstrateDynamoDB();
 
-    // Ejemplos avanzados de URLs firmadas
-    console.log('\n🎯 Ejemplos avanzados de URLs firmadas:');
+    // Advanced signed URL examples
+    console.log('\n🎯 Advanced signed URL examples:');
     await demonstrateAdvancedSignedUrls();
   } catch (error) {
-    console.error('❌ Error en la aplicación:', extractErrorInfo(error));
+    console.error('❌ Application error:', extractErrorInfo(error));
     process.exit(1);
   }
 }
 
 /**
- * Demostración de operaciones S3
+ * S3 operations demonstration
  */
 async function demonstrateS3() {
   try {
-    // Listar buckets
+    // List buckets
     const buckets = await withRetry(() => s3Service.listBuckets());
-    console.log('Buckets disponibles:', buckets?.length || 0);
+    console.log('Available buckets:', buckets?.length || 0);
 
     if (buckets && buckets.length > 0) {
       buckets.forEach((bucket) => {
-        console.log(`  - ${bucket.Name} (creado: ${bucket.CreationDate})`);
+        console.log(`  - ${bucket.Name} (created: ${bucket.CreationDate})`);
       });
     }
 
@@ -49,76 +49,76 @@ async function demonstrateS3() {
       const bucketName = process.env.S3_BUCKET_NAME;
       if (bucketName) {
         const testKey = 'test-file.txt';
-        const testContent = 'Hola desde AWS SDK v3!';
+        const testContent = 'Hello from AWS SDK v3!';
 
-        console.log(`\nSubiendo archivo a ${bucketName}/${testKey}...`);
+        console.log(`\nUploading file to ${bucketName}/${testKey}...`);
         await s3Service.uploadObject(bucketName, testKey, testContent);
-        console.log('✅ Archivo subido exitosamente');
+        console.log('✅ File uploaded successfully');
 
-        console.log('Descargando archivo...');
+        console.log('Downloading file...');
         const downloaded = await s3Service.downloadObject(bucketName, testKey);
-        console.log('Contenido descargado:', downloaded.content);
-        console.log('Metadatos:', downloaded.metadata);
-        console.log('Tipo de contenido:', downloaded.contentType);
+        console.log('Downloaded content:', downloaded.content);
+        console.log('Metadata:', downloaded.metadata);
+        console.log('Content type:', downloaded.contentType);
 
-        console.log(`\nBorrando archivo ${bucketName}/${testKey}...`);
+        console.log(`\nDeleting file ${bucketName}/${testKey}...`);
         await s3Service.deleteObject(bucketName, testKey);
-        console.log('✅ Archivo borrado exitosamente');
+        console.log('✅ File deleted successfully');
       }
     }
 
-    // Ejemplos de URLs firmadas
-    console.log('\n🔗 Ejemplos de URLs firmadas:');
+    // Signed URLs examples
+    console.log('\n🔗 Signed URLs examples:');
     await demonstrateSignedUrls();
   } catch (error) {
-    console.error('Error en demostración S3:', extractErrorInfo(error));
+    console.error('Error in S3 demonstration:', extractErrorInfo(error));
   }
 }
 
 /**
- * Demostración de URLs firmadas de S3
+ * S3 signed URLs demonstration
  */
 async function demonstrateSignedUrls() {
   try {
     const bucketName = process.env.S3_BUCKET_NAME;
     if (!bucketName) {
       console.log(
-        '⚠️ S3_BUCKET_NAME no configurado, saltando ejemplos de URLs firmadas'
+        '⚠️ S3_BUCKET_NAME not configured, skipping signed URL examples'
       );
       return;
     }
 
     const testKey = 'signed-url-example.txt';
-    const testContent = 'Este archivo fue creado para demostrar URLs firmadas';
+    const testContent = 'This file was created to demonstrate signed URLs';
 
-    // 1. Subir un archivo para poder generar URLs de descarga
+    // 1. Upload a file to generate download URLs
     console.log(
-      `Subiendo archivo ${testKey} para ejemplos de URLs firmadas...`
+      `Uploading file ${testKey} for signed URL examples...`
     );
     await s3Service.uploadObject(bucketName, testKey, testContent);
 
-    // 2. Generar URL firmada para descarga (válida por 1 hora)
-    console.log('\n🔽 Generando URL firmada para descarga (1 hora):');
+    // 2. Generate signed URL for download (valid for 1 hour)
+    console.log('\n🔽 Generating signed URL for download (1 hour):');
     const downloadUrl = await s3Service.getDownloadSignedUrl(
       bucketName,
       testKey,
       3600
     );
-    console.log('URL de descarga:', downloadUrl);
-    console.log('⏰ Esta URL expira en 1 hora');
+    console.log('Download URL:', downloadUrl);
+    console.log('⏰ This URL expires in 1 hour');
 
-    // 3. Generar URL firmada para descarga (válida por 5 minutos)
-    console.log('\n🔽 Generando URL firmada para descarga (5 minutos):');
+    // 3. Generate signed URL for download (valid for 5 minutes)
+    console.log('\n🔽 Generating signed URL for download (5 minutes):');
     const shortDownloadUrl = await s3Service.getDownloadSignedUrl(
       bucketName,
       testKey,
       300
     );
-    console.log('URL de descarga (corta duración):', shortDownloadUrl);
-    console.log('⏰ Esta URL expira en 5 minutos');
+    console.log('Download URL (short duration):', shortDownloadUrl);
+    console.log('⏰ This URL expires in 5 minutes');
 
-    // 4. Generar URL firmada para upload
-    console.log('\n🔼 Generando URL firmada para upload:');
+    // 4. Generate signed URL for upload
+    console.log('\n🔼 Generating signed URL for upload:');
     const uploadKey = 'uploaded-via-signed-url.txt';
     const uploadUrl = await s3Service.getUploadSignedUrl(
       bucketName,
@@ -126,39 +126,39 @@ async function demonstrateSignedUrls() {
       'text/plain',
       3600
     );
-    console.log('URL de upload:', uploadUrl);
+    console.log('Upload URL:', uploadUrl);
     console.log(
-      '📝 Puedes usar esta URL para subir archivos directamente desde el frontend'
+      '📝 You can use this URL to upload files directly from the frontend'
     );
-    console.log('📋 Ejemplo de uso con fetch:');
+    console.log('📋 Usage example with fetch:');
     console.log(`
       fetch('${uploadUrl}', {
         method: 'PUT',
-        body: 'Contenido del archivo',
+        body: 'File content',
         headers: {
           'Content-Type': 'text/plain'
         }
       }).then(response => {
         if (response.ok) {
-          console.log('Archivo subido exitosamente');
+          console.log('File uploaded successfully');
         }
       });
     `);
 
-    // 5. Generar múltiples URLs firmadas
-    console.log('\n📦 Generando múltiples URLs firmadas:');
-    const keys = [testKey, 'otro-archivo.txt', 'imagen.jpg'];
+    // 5. Generate multiple signed URLs
+    console.log('\n📦 Generating multiple signed URLs:');
+    const keys = [testKey, 'another-file.txt', 'image.jpg'];
 
-    // Primero subimos algunos archivos adicionales para el ejemplo
+    // First upload some additional files for the example
     await s3Service.uploadObject(
       bucketName,
-      'otro-archivo.txt',
-      'Contenido del otro archivo'
+      'another-file.txt',
+      'Another file content'
     );
     await s3Service.uploadObject(
       bucketName,
-      'imagen.jpg',
-      'Datos simulados de imagen',
+      'image.jpg',
+      'Simulated image data',
       'image/jpeg'
     );
 
@@ -166,39 +166,39 @@ async function demonstrateSignedUrls() {
       bucketName,
       keys,
       1800
-    ); // 30 minutos
-    console.log('URLs múltiples generadas:');
+    ); // 30 minutes
+    console.log('Multiple URLs generated:');
     Object.entries(multipleUrls).forEach(([key, url]) => {
       console.log(`  📄 ${key}: ${url}`);
     });
 
-    // 6. Limpiar archivos de ejemplo
-    console.log('\n🧹 Limpiando archivos de ejemplo...');
+    // 6. Clean up example files
+    console.log('\n🧹 Cleaning up example files...');
     await s3Service.deleteObject(bucketName, testKey);
-    await s3Service.deleteObject(bucketName, 'otro-archivo.txt');
-    await s3Service.deleteObject(bucketName, 'imagen.jpg');
-    console.log('✅ Archivos de ejemplo eliminados');
+    await s3Service.deleteObject(bucketName, 'another-file.txt');
+    await s3Service.deleteObject(bucketName, 'image.jpg');
+    console.log('✅ Example files deleted');
 
-    console.log('\n💡 Casos de uso comunes para URLs firmadas:');
-    console.log('  • Permitir descarga temporal de archivos privados');
+    console.log('\n💡 Common use cases for signed URLs:');
+    console.log('  • Allow temporary download of private files');
     console.log(
-      '  • Upload directo desde frontend sin exponer credenciales AWS'
+      '  • Direct upload from frontend without exposing AWS credentials'
     );
     console.log(
-      '  • Compartir archivos con usuarios externos por tiempo limitado'
+      '  • Share files with external users for limited time'
     );
-    console.log('  • Integración con aplicaciones de terceros');
-    console.log('  • Control granular de acceso temporal a recursos');
+    console.log('  • Integration with third-party applications');
+    console.log('  • Granular temporary access control to resources');
   } catch (error) {
     console.error(
-      'Error en demostración de URLs firmadas:',
+      'Error in signed URLs demonstration:',
       extractErrorInfo(error)
     );
   }
 }
 
 /**
- * Demostración de operaciones DynamoDB
+ * DynamoDB operations demonstration
  */
 // eslint-disable-next-line no-unused-vars
 async function demonstrateDynamoDB() {
@@ -206,52 +206,52 @@ async function demonstrateDynamoDB() {
     const tableName = process.env.DYNAMODB_TABLE_NAME;
     if (!tableName) {
       console.log(
-        '⚠️ DYNAMODB_TABLE_NAME no configurado, saltando ejemplos DynamoDB'
+        '⚠️ DYNAMODB_TABLE_NAME not configured, skipping DynamoDB examples'
       );
       return;
     }
 
-    // Ejemplo de crear un item
+    // Example of creating an item
     const testItem = {
       id: 'test-id-' + Date.now(),
-      name: 'Ejemplo desde AWS SDK v3',
+      name: 'Example from AWS SDK v3',
       timestamp: new Date().toISOString(),
     };
 
-    console.log('Guardando item en DynamoDB...');
+    console.log('Saving item to DynamoDB...');
     await dynamoService.putItem(tableName, testItem);
-    console.log('✅ Item guardado:', testItem.id);
+    console.log('✅ Item saved:', testItem.id);
 
-    // Ejemplo de obtener el item
-    console.log('Obteniendo item...');
+    // Example of getting the item
+    console.log('Getting item...');
     const retrievedItem = await dynamoService.getItem(tableName, {
       id: testItem.id,
     });
-    console.log('Item obtenido:', retrievedItem);
+    console.log('Retrieved item:', retrievedItem);
 
-    // Ejemplo de escanear tabla
-    console.log('Escaneando tabla...');
+    // Example of scanning table
+    console.log('Scanning table...');
     const scanResult = await dynamoService.scanTable(tableName, 5);
-    console.log(`Encontrados ${scanResult.count} items`);
+    console.log(`Found ${scanResult.count} items`);
 
-    // Ejemplo de eliminar el item
-    console.log('Eliminando item...');
+    // Example of deleting the item
+    console.log('Deleting item...');
     await dynamoService.deleteItem(tableName, { id: testItem.id });
-    console.log('✅ Item eliminado:', testItem.id);
+    console.log('✅ Item deleted:', testItem.id);
 
-    // Verificar que el item fue eliminado
+    // Verify that the item was deleted
     const deletedItem = await dynamoService.getItem(tableName, {
       id: testItem.id,
     });
     if (!deletedItem) {
-      console.log('✅ Item eliminado correctamente, no encontrado en la tabla');
+      console.log('✅ Item deleted correctly, not found in table');
     } else {
-      console.error('⚠️ El item aún existe en la tabla:', deletedItem);
+      console.error('⚠️ Item still exists in table:', deletedItem);
     }
   } catch (error) {
-    console.error('Error en demostración DynamoDB:', extractErrorInfo(error));
+    console.error('Error in DynamoDB demonstration:', extractErrorInfo(error));
   }
 }
 
-// Ejecutar la aplicación
+// Run the application
 main();

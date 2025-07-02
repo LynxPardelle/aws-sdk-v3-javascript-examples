@@ -9,7 +9,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from '../clients/s3-client.js';
 
 /**
- * Listar todos los buckets de S3
+ * List all S3 buckets
  */
 export async function listBuckets() {
   try {
@@ -17,13 +17,13 @@ export async function listBuckets() {
     const response = await s3Client.send(command);
     return response.Buckets;
   } catch (error) {
-    console.error('Error listando buckets:', error);
+    console.error('Error listing buckets:', error);
     throw error;
   }
 }
 
 /**
- * Crear un nuevo bucket
+ * Create a new bucket
  */
 export async function createBucket(bucketName) {
   try {
@@ -33,13 +33,13 @@ export async function createBucket(bucketName) {
     const response = await s3Client.send(command);
     return response;
   } catch (error) {
-    console.error('Error creando bucket:', error);
+    console.error('Error creating bucket:', error);
     throw error;
   }
 }
 
 /**
- * Subir un objeto a S3
+ * Upload an object to S3
  */
 export async function uploadObject(
   bucketName,
@@ -57,13 +57,13 @@ export async function uploadObject(
     const response = await s3Client.send(command);
     return response;
   } catch (error) {
-    console.error('Error subiendo objeto:', error);
+    console.error('Error uploading object:', error);
     throw error;
   }
 }
 
 /**
- * Descargar un objeto de S3
+ * Download an object from S3
  */
 export async function downloadObject(bucketName, key) {
   try {
@@ -73,7 +73,7 @@ export async function downloadObject(bucketName, key) {
     });
     const response = await s3Client.send(command);
 
-    // Convertir el stream a string
+    // Convert the stream to string
     const streamToString = (stream) =>
       new Promise((resolve, reject) => {
         const chunks = [];
@@ -89,13 +89,13 @@ export async function downloadObject(bucketName, key) {
       contentType: response.ContentType,
     };
   } catch (error) {
-    console.error('Error descargando objeto:', error);
+    console.error('Error downloading object:', error);
     throw error;
   }
 }
 
 /**
- * Eliminar un objeto de S3
+ * Delete an object from S3
  */
 export async function deleteObject(bucketName, key) {
   try {
@@ -106,17 +106,17 @@ export async function deleteObject(bucketName, key) {
     const response = await s3Client.send(command);
     return response;
   } catch (error) {
-    console.error('Error eliminando objeto:', error);
+    console.error('Error deleting object:', error);
     throw error;
   }
 }
 
 /**
- * Generar URL firmada para descargar un objeto de S3
- * @param {string} bucketName - Nombre del bucket
- * @param {string} key - Clave del objeto
- * @param {number} expiresIn - Tiempo de expiración en segundos (por defecto 1 hora)
- * @returns {Promise<string>} URL firmada para descarga
+ * Generate signed URL to download an object from S3
+ * @param {string} bucketName - Bucket name
+ * @param {string} key - Object key
+ * @param {number} expiresIn - Expiration time in seconds (default 1 hour)
+ * @returns {Promise<string>} Signed URL for download
  */
 export async function getDownloadSignedUrl(bucketName, key, expiresIn = 3600) {
   try {
@@ -128,18 +128,18 @@ export async function getDownloadSignedUrl(bucketName, key, expiresIn = 3600) {
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
     return signedUrl;
   } catch (error) {
-    console.error('Error generando URL firmada para descarga:', error);
+    console.error('Error generating signed URL for download:', error);
     throw error;
   }
 }
 
 /**
- * Generar URL firmada para subir un objeto a S3
- * @param {string} bucketName - Nombre del bucket
- * @param {string} key - Clave del objeto
- * @param {string} contentType - Tipo de contenido del archivo
- * @param {number} expiresIn - Tiempo de expiración en segundos (por defecto 1 hora)
- * @returns {Promise<string>} URL firmada para upload
+ * Generate signed URL to upload an object to S3
+ * @param {string} bucketName - Bucket name
+ * @param {string} key - Object key
+ * @param {string} contentType - File content type
+ * @param {number} expiresIn - Expiration time in seconds (default 1 hour)
+ * @returns {Promise<string>} Signed URL for upload
  */
 export async function getUploadSignedUrl(
   bucketName,
@@ -157,17 +157,17 @@ export async function getUploadSignedUrl(
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
     return signedUrl;
   } catch (error) {
-    console.error('Error generando URL firmada para upload:', error);
+    console.error('Error generating signed URL for upload:', error);
     throw error;
   }
 }
 
 /**
- * Generar múltiples URLs firmadas para descarga
- * @param {string} bucketName - Nombre del bucket
- * @param {string[]} keys - Array de claves de objetos
- * @param {number} expiresIn - Tiempo de expiración en segundos
- * @returns {Promise<Object>} Objeto con las URLs firmadas indexadas por clave
+ * Generate multiple signed URLs for download
+ * @param {string} bucketName - Bucket name
+ * @param {string[]} keys - Array of object keys
+ * @param {number} expiresIn - Expiration time in seconds
+ * @returns {Promise<Object>} Object with signed URLs indexed by key
  */
 export async function getMultipleDownloadSignedUrls(
   bucketName,
@@ -177,7 +177,7 @@ export async function getMultipleDownloadSignedUrls(
   try {
     const signedUrls = {};
 
-    // Generar URLs firmadas en paralelo para mejor rendimiento
+    // Generate signed URLs in parallel for better performance
     const urlPromises = keys.map(async (key) => {
       const url = await getDownloadSignedUrl(bucketName, key, expiresIn);
       return { key, url };
@@ -185,14 +185,14 @@ export async function getMultipleDownloadSignedUrls(
 
     const results = await Promise.all(urlPromises);
 
-    // Convertir array a objeto para fácil acceso
+    // Convert array to object for easy access
     results.forEach(({ key, url }) => {
       signedUrls[key] = url;
     });
 
     return signedUrls;
   } catch (error) {
-    console.error('Error generando múltiples URLs firmadas:', error);
+    console.error('Error generating multiple signed URLs:', error);
     throw error;
   }
 }

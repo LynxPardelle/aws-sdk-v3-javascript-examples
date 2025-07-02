@@ -1,7 +1,7 @@
 {
   "name": "aws-sdk-v3-javascript-examples",
   "version": "1.0.0",
-  "description": "Ejemplos mínimos con buenas prácticas para usar AWS SDK v3 con Node.js",
+  "description": "Minimal examples with best practices for using AWS SDK v3 with Node.js",
   "main": "src/index.js",
   "type": "module",
   "author": "LynxPardelle",
