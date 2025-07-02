@@ -147,6 +147,34 @@ await dynamoService.deleteItem('mi-tabla', { id: '123' });
 const result = await dynamoService.scanTable('mi-tabla', 10);
 ```
 
+### URLs Firmadas de S3
+
+```javascript
+import * as s3Service from './services/s3-service.js';
+
+// Generar URL firmada para descarga (válida por 1 hora)
+const downloadUrl = await s3Service.getDownloadSignedUrl('mi-bucket', 'archivo.pdf', 3600);
+
+// Generar URL firmada para upload directo
+const uploadUrl = await s3Service.getUploadSignedUrl('mi-bucket', 'nuevo-archivo.pdf', 'application/pdf', 1800);
+
+// Generar múltiples URLs firmadas
+const urls = await s3Service.getMultipleDownloadSignedUrls('mi-bucket', ['file1.txt', 'file2.jpg'], 3600);
+
+// Usar URL de upload desde frontend
+fetch(uploadUrl, {
+  method: 'PUT',
+  body: archivoFile,
+  headers: {
+    'Content-Type': 'application/pdf'
+  }
+}).then(response => {
+  if (response.ok) {
+    console.log('Archivo subido exitosamente');
+  }
+});
+```
+
 ## 🛡️ Manejo de Errores
 
 El proyecto incluye utilidades para manejo robusto de errores:

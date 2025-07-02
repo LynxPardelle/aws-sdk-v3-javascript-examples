@@ -5,6 +5,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from '../clients/s3-client.js';
 
 /**
@@ -106,6 +107,92 @@ export async function deleteObject(bucketName, key) {
     return response;
   } catch (error) {
     console.error('Error eliminando objeto:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generar URL firmada para descargar un objeto de S3
+ * @param {string} bucketName - Nombre del bucket
+ * @param {string} key - Clave del objeto
+ * @param {number} expiresIn - Tiempo de expiración en segundos (por defecto 1 hora)
+ * @returns {Promise<string>} URL firmada para descarga
+ */
+export async function getDownloadSignedUrl(bucketName, key, expiresIn = 3600) {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    });
+
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
+    return signedUrl;
+  } catch (error) {
+    console.error('Error generando URL firmada para descarga:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generar URL firmada para subir un objeto a S3
+ * @param {string} bucketName - Nombre del bucket
+ * @param {string} key - Clave del objeto
+ * @param {string} contentType - Tipo de contenido del archivo
+ * @param {number} expiresIn - Tiempo de expiración en segundos (por defecto 1 hora)
+ * @returns {Promise<string>} URL firmada para upload
+ */
+export async function getUploadSignedUrl(
+  bucketName,
+  key,
+  contentType = 'application/octet-stream',
+  expiresIn = 3600
+) {
+  try {
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      ContentType: contentType,
+    });
+
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
+    return signedUrl;
+  } catch (error) {
+    console.error('Error generando URL firmada para upload:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generar múltiples URLs firmadas para descarga
+ * @param {string} bucketName - Nombre del bucket
+ * @param {string[]} keys - Array de claves de objetos
+ * @param {number} expiresIn - Tiempo de expiración en segundos
+ * @returns {Promise<Object>} Objeto con las URLs firmadas indexadas por clave
+ */
+export async function getMultipleDownloadSignedUrls(
+  bucketName,
+  keys,
+  expiresIn = 3600
+) {
+  try {
+    const signedUrls = {};
+
+    // Generar URLs firmadas en paralelo para mejor rendimiento
+    const urlPromises = keys.map(async (key) => {
+      const url = await getDownloadSignedUrl(bucketName, key, expiresIn);
+      return { key, url };
+    });
+
+    const results = await Promise.all(urlPromises);
+
+    // Convertir array a objeto para fácil acceso
+    results.forEach(({ key, url }) => {
+      signedUrls[key] = url;
+    });
+
+    return signedUrls;
+  } catch (error) {
+    console.error('Error generando múltiples URLs firmadas:', error);
     throw error;
   }
 }
